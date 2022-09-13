@@ -314,9 +314,12 @@ class GCN(nn.Module):
             hx, cx = self.step(feature_input, hx, cx)
 
         updated_feature, _ = self.message_passing(
-            hx, trackers, dist_mask)  # BxH
-
+            hx, trackers, dist_mask)  # BxH or Bx1024
+        
+        # vel: Bx2
         vel = self.vel_classifier(self.drop(updated_feature))
+        
+        # logit_vel_stack: Bx2
         logit_vel_stack.append(vel)
         logit_vel_stack = torch.stack(logit_vel_stack).view(-1, 2)
 
